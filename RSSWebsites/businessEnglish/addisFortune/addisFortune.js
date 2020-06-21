@@ -1,0 +1,1 @@
+const rssURL = "http://fetchrss.com/rss/5ecc08fa8a93f878358b45675ecee3ab8a93f8445b8b4567.xml"

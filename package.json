@@ -1,0 +1,20 @@
+{
+	"name": "rss-parser-application",
+	"version": "1.0.0",
+	"description": "",
+	"main": "server.js",
+	"scripts": {
+		"start": "NODE_ENV=production node server.js",
+		"dev": "node server.js",
+		"debug": "node server.js"
+	},
+	"author": "Biruk (MR.Engineer)",
+	"license": "ISC",
+	"dependencies": {
+		"dotenv": "^8.2.0",
+		"rss-parser": "^3.8.0",
+		"shortid": "^2.2.15",
+		"telegraf": "^3.38.0"
+	},
+	"git repository": "https://github.com/MrEngineerET/rss-parser-node-application"
+}

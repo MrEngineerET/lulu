@@ -1,0 +1,31 @@
+------------------------------------------------------------------------------------------------------
+2merkato.com  
+ has its own rss but its developer haven't update their rss since 2016.
+-------------------------------------------------------------------------------------------------------
+
+
+-------------------------------------------------------------------------------------------------------
+data structure for posts
+
+data {
+    caption: Object,
+    photo:{
+        source: String  // either 'remote' or 'local'
+        location: String 
+    }
+    chatID: Number,
+    buttons: Array of Array // each individual child array containing an object specifying a button
+}
+
+dataStructure of caption
+
+caption {
+    title: String,
+    description: String,
+    date: String,
+    sourceURL: String
+    photoURL: String
+    to: String // either toGroup or toChannel
+    __id: unique id
+}
+--------------------------------------------------------------------------------------------------------
