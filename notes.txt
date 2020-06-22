@@ -15,6 +15,7 @@ data {
     }
     chatID: Number,
     buttons: Array of Array // each individual child array containing an object specifying a button
+    sourceURL: String
 }
 
 dataStructure of caption
@@ -23,8 +24,6 @@ caption {
     title: String,
     description: String,
     date: String,
-    sourceURL: String
-    photoURL: String
     to: String // either toGroup or toChannel
     __id: unique id
 }

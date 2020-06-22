@@ -8,12 +8,9 @@ bot.action("noResponse", (ctx) => {
 	ctx.answerCbQuery()
 })
 
-bot.action("remove", (ctx) => {
-	ctx.deleteMessage()
-})
-
-let post = async function ({ caption, photo, chatID, buttons }) {
-	if (buttons) {
+let post = async function ({ caption, photo, chatID, buttons, sourceURL }) {
+	caption.sourceURL = sourceURL
+	if (caption.to == "toGroup") {
 		if (photo.source == "local") {
 			await bot.telegram.sendPhoto(
 				chatID,
@@ -58,14 +55,11 @@ let post = async function ({ caption, photo, chatID, buttons }) {
 
 let prepareCaption = function (caption) {
 	if (caption.to == "toGroup") {
-		const SPLIT = "@#$"
 		return `
-    <u><b>${caption.title}${SPLIT}</b></u>
+    <u><b>${caption.title}</b></u>
     
-${caption.description}${SPLIT}
+${caption.description}
 
-<a href="${caption.sourceURL}">sourceURL</a>
-<a href="${caption.photoURL}">imageURL</a>
 __id:${caption.__id}@#$%
 `
 	} else if (caption.to == "toChannel") {
@@ -74,7 +68,7 @@ __id:${caption.__id}@#$%
     
 ${caption.description}
 
-For more -> <a href="${caption.sourceURL}">READ MORE</a>
+<a href="${caption.sourceURL}">READ MORE</a>
     `
 	}
 }
