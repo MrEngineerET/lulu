@@ -10,7 +10,6 @@ const rssURL = "https://www.whats-on-netflix.com/feed/"
 
 const latestItem = path.join(__dirname, "latestNetflixItem.json")
 const dbJSON = path.join(__dirname, "netflixNEWS.json")
-let remove = "removeNtx"
 
 let parser = new Parser()
 
@@ -22,7 +21,7 @@ let btn = [
 		},
 		{
 			text: "remove",
-			callback_data: remove,
+			callback_data: "remove",
 		},
 	],
 ]
@@ -109,37 +108,6 @@ exports.fetchAndPost = async () => {
 	}
 }
 
-bot.bot.action(remove, (ctx) => {
-	ctx.deleteMessage()
-	let caption = ctx.update.callback_query.message.caption
-	let id = caption.slice(caption.indexOf("__id") + 5, caption.indexOf("@#$%"))
-	deleteDataFromSavedFile(id)
-})
-bot.bot.action("postNetflix", netflixPostToChannel)
-
-function netflixPostToChannel(ctx) {
-	ctx.answerCbQuery()
-	let caption = ctx.update.callback_query.message.caption
-	let id = caption.slice(caption.indexOf("__id") + 5, caption.indexOf("@#$%"))
-	let data = getDataFromSavedFile(id)
-	if (data) {
-		let photoURL = data.photo.location
-		if (data.photo.source == "local") {
-			let imgName = ctx.update.callback_query.data
-			photoURL = path.join(__dirname, "..", "..", "images", `${imgName}.jpg`)
-		}
-
-		data.caption.to = "toChannel"
-		data.caption.PhotoURL = photoURL
-		data.photo.location = photoURL
-		data.chatID = process.env.testChannelID
-		bot.post(data).catch((err) => {
-			console.log(err)
-		})
-	}
-	ctx.deleteMessage()
-}
-
 function saveFeeds(feeds) {
 	data = JSON.parse(fs.readFileSync(dbJSON), "utf-8")
 	feeds.forEach((feed) => {
@@ -149,22 +117,45 @@ function saveFeeds(feeds) {
 		console.log(err)
 	})
 }
+// bot.bot.action("postNetflix", netflixPostToChannel)
+// function netflixPostToChannel(ctx) {
+// 	ctx.answerCbQuery()
+// 	let caption = ctx.update.callback_query.message.caption
+// 	let id = caption.slice(caption.indexOf("__id") + 5, caption.indexOf("@#$%"))
+// 	let data = getDataFromSavedFile(id)
+// 	if (data) {
+// 		let photoURL = data.photo.location
+// 		if (data.photo.source == "local") {
+// 			let imgName = ctx.update.callback_query.data
+// 			photoURL = path.join(__dirname, "..", "..", "images", `${imgName}.jpg`)
+// 		}
 
-function getDataFromSavedFile(id) {
-	let feeds = JSON.parse(fs.readFileSync(dbJSON), "utf-8")
-	feed = feeds.find((el) => el.caption.__id == id)
-	feeds.splice(feeds.indexOf(feed), 1)
-	fs.writeFileSync(dbJSON, JSON.stringify(feeds), "utf-8", (err) => {
-		console.log(err)
-	})
-	return feed
-}
+// 		data.caption.to = "toChannel"
+// 		data.caption.PhotoURL = photoURL
+// 		data.photo.location = photoURL
+// 		data.chatID = process.env.testChannelID
+// 		bot.post(data).catch((err) => {
+// 			console.log(err)
+// 		})
+// 	}
+// 	ctx.deleteMessage()
+// }
 
-function deleteDataFromSavedFile(id) {
-	let feeds = JSON.parse(fs.readFileSync(dbJSON), "utf-8")
-	feed = feeds.find((el) => el.__id == id)
-	feeds.splice(feeds.indexOf(feed), 1)
-	fs.writeFileSync(dbJONN, JSON.stringify(feeds), "utf-8", (err) => {
-		console.log(err)
-	})
-}
+// function getDataFromSavedFile(id) {
+// 	let feeds = JSON.parse(fs.readFileSync(dbJSON), "utf-8")
+// 	feed = feeds.find((el) => el.caption.__id == id)
+// 	feeds.splice(feeds.indexOf(feed), 1)
+// 	fs.writeFileSync(dbJSON, JSON.stringify(feeds), "utf-8", (err) => {
+// 		console.log(err)
+// 	})
+// 	return feed
+// }
+
+// function deleteDataFromSavedFile(id) {
+// 	let feeds = JSON.parse(fs.readFileSync(dbJSON), "utf-8")
+// 	feed = feeds.find((el) => el.__id == id)
+// 	feeds.splice(feeds.indexOf(feed), 1)
+// 	fs.writeFileSync(dbJSON, JSON.stringify(feeds), "utf-8", (err) => {
+// 		console.log(err)
+// 	})
+// }

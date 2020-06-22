@@ -27,23 +27,27 @@ const addisFortune = require("./RSSWebsites/businessEnglish/addisFortune/addisFo
 // 	setInterval(sixHourFunction, sixHour)
 // }
 
-// if (process.env.NODE_ENV === "development") {
-// 	const thirtySeconds = 1000 * 10 * 3
-// 	const oneMinute = 1000 * 10 * 6
+if (process.env.NODE_ENV === "development") {
+	console.log("development In")
 
-// 	function thirtySecondFunction() {
-// 		netflix.fetchAndPost()
-// 	}
-// 	setInterval(thirtySecondFunction, thirtySeconds)
+	const oneMinute = 1000 * 60 * 1
+	const twoMinute = 1000 * 60 * 2
+	const fourMinute = 1000 * 60 * 4
 
-// 	function oneMinuteFunction() {
-// 		merkato2.fetchAndPost()
-// 	}
-// 	setInterval(oneMinuteFunction, oneMinute)
-// }
+	function oneMinuteFunction() {
+		merkato2.fetchAndPost()
+	}
+	setInterval(oneMinuteFunction, oneMinute)
 
-// merkato2.fetchAndPost()
-// netflix.fetchAndPost()
-addisFortune.fetchAndPost()
+	function twoMinuteFunction() {
+		addisFortune.fetchAndPost()
+	}
+	setInterval(twoMinuteFunction, twoMinute)
+
+	function fourMinuteFunction() {
+		netflix.fetchAndPost()
+	}
+	setInterval(fourMinuteFunction, fourMinute)
+}
 
 bot.launch()

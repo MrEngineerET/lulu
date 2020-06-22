@@ -9,15 +9,13 @@ const rssURL = "http://fetchrss.com/rss/5ecc08fa8a93f878358b45675ecc085c8a93f86a
 
 const latestItem = path.join(__dirname, "latest2merkatoItem.json")
 const dbJSON = path.join(__dirname, "2merkatoNEWS.json")
-let remove = "remove2m"
-
 let parser = new Parser()
 
 // button for posts with their own image
 let btn = [
 	[
 		{ text: "#Ethiopian_Business_Daily", callback_data: "post2merkato" },
-		{ text: "remove", callback_data: remove },
+		{ text: "remove", callback_data: "remove" },
 	],
 ]
 // button for posts without their own image
@@ -29,7 +27,7 @@ let btn4noImg = [
 		},
 		{
 			text: "Remove",
-			callback_data: remove,
+			callback_data: "remove",
 		},
 	],
 	[
@@ -187,54 +185,6 @@ exports.fetchAndPost = async function () {
 		console.log(err)
 	}
 }
-bot.bot.action("post2merkato", merkatoChannelPostController)
-
-bot.bot.action("DNEth", merkatoChannelPostController)
-bot.bot.action("EPEth", merkatoChannelPostController)
-bot.bot.action("DNInt", merkatoChannelPostController)
-bot.bot.action("EPInt", merkatoChannelPostController)
-bot.bot.action("NREth", merkatoChannelPostController)
-bot.bot.action("NUEth", merkatoChannelPostController)
-bot.bot.action("NRInt", merkatoChannelPostController)
-bot.bot.action("NUInt", merkatoChannelPostController)
-bot.bot.action("BNEth", merkatoChannelPostController)
-bot.bot.action("BNInt", merkatoChannelPostController)
-bot.bot.action("Evnt", merkatoChannelPostController)
-bot.bot.action("Condo", merkatoChannelPostController)
-bot.bot.action("Oil", merkatoChannelPostController)
-bot.bot.action("Tech", merkatoChannelPostController)
-bot.bot.action("Transp", merkatoChannelPostController)
-bot.bot.action("Trsm", merkatoChannelPostController)
-
-bot.bot.action(remove, (ctx) => {
-	ctx.deleteMessage()
-	let caption = ctx.update.callback_query.message.caption
-	let id = caption.slice(caption.indexOf("__id") + 5, caption.indexOf("@#$%"))
-	deleteDataFromSavedFile(id)
-})
-
-function merkatoChannelPostController(ctx) {
-	ctx.answerCbQuery()
-	let caption = ctx.update.callback_query.message.caption
-	let id = caption.slice(caption.indexOf("__id") + 5, caption.indexOf("@#$%"))
-	let data = getDataFromSavedFile(id)
-	if (data) {
-		let photoURL = data.photo.location
-		if (data.photo.source == "local") {
-			let imgName = ctx.update.callback_query.data
-			photoURL = path.join(__dirname, "..", "..", "images", `${imgName}.jpg`)
-		}
-
-		data.caption.to = "toChannel"
-		data.caption.PhotoURL = photoURL
-		data.photo.location = photoURL
-		data.chatID = process.env.testChannelID
-		bot.post(data).catch((err) => {
-			console.log(err)
-		})
-	}
-	ctx.deleteMessage()
-}
 
 function saveFeeds(feeds) {
 	data = JSON.parse(fs.readFileSync(dbJSON), "utf-8")
@@ -245,22 +195,63 @@ function saveFeeds(feeds) {
 		console.log(err)
 	})
 }
+// bot.bot.action("post2merkato", merkatoChannelPostController)
 
-function getDataFromSavedFile(id) {
-	let feeds = JSON.parse(fs.readFileSync(dbJSON), "utf-8")
-	feed = feeds.find((el) => el.caption.__id == id)
-	feeds.splice(feeds.indexOf(feed), 1)
-	fs.writeFileSync(dbJSON, JSON.stringify(feeds), "utf-8", (err) => {
-		console.log(err)
-	})
-	return feed
-}
+// bot.bot.action("DNEth", merkatoChannelPostController)
+// bot.bot.action("EPEth", merkatoChannelPostController)
+// bot.bot.action("DNInt", merkatoChannelPostController)
+// bot.bot.action("EPInt", merkatoChannelPostController)
+// bot.bot.action("NREth", merkatoChannelPostController)
+// bot.bot.action("NUEth", merkatoChannelPostController)
+// bot.bot.action("NRInt", merkatoChannelPostController)
+// bot.bot.action("NUInt", merkatoChannelPostController)
+// bot.bot.action("BNEth", merkatoChannelPostController)
+// bot.bot.action("BNInt", merkatoChannelPostController)
+// bot.bot.action("Evnt", merkatoChannelPostController)
+// bot.bot.action("Condo", merkatoChannelPostController)
+// bot.bot.action("Oil", merkatoChannelPostController)
+// bot.bot.action("Tech", merkatoChannelPostController)
+// bot.bot.action("Transp", merkatoChannelPostController)
+// bot.bot.action("Trsm", merkatoChannelPostController)
 
-function deleteDataFromSavedFile(id) {
-	let feeds = JSON.parse(fs.readFileSync(dbJSON), "utf-8")
-	feed = feeds.find((el) => el.__id == id)
-	feeds.splice(feeds.indexOf(feed), 1)
-	fs.writeFileSync(dbJSON, JSON.stringify(feeds), "utf-8", (err) => {
-		console.log(err)
-	})
-}
+// function merkatoChannelPostController(ctx) {
+// 	ctx.answerCbQuery()
+// 	let caption = ctx.update.callback_query.message.caption
+// 	let id = caption.slice(caption.indexOf("__id") + 5, caption.indexOf("@#$%"))
+// 	let data = getDataFromSavedFile(id)
+// 	if (data) {
+// 		let photoURL = data.photo.location
+// 		if (data.photo.source == "local") {
+// 			let imgName = ctx.update.callback_query.data
+// 			photoURL = path.join(__dirname, "..", "..", "images", `${imgName}.jpg`)
+// 		}
+
+// 		data.caption.to = "toChannel"
+// 		data.caption.PhotoURL = photoURL
+// 		data.photo.location = photoURL
+// 		data.chatID = process.env.testChannelID
+// 		bot.post(data).catch((err) => {
+// 			console.log(err)
+// 		})
+// 	}
+// 	ctx.deleteMessage()
+// }
+
+// function getDataFromSavedFile(id) {
+// 	let feeds = JSON.parse(fs.readFileSync(dbJSON), "utf-8")
+// 	feed = feeds.find((el) => el.caption.__id == id)
+// 	feeds.splice(feeds.indexOf(feed), 1)
+// 	fs.writeFileSync(dbJSON, JSON.stringify(feeds), "utf-8", (err) => {
+// 		console.log(err)
+// 	})
+// 	return feed
+// }
+
+// function deleteDataFromSavedFile(id) {
+// 	let feeds = JSON.parse(fs.readFileSync(dbJSON), "utf-8")
+// 	feed = feeds.find((el) => el.__id == id)
+// 	feeds.splice(feeds.indexOf(feed), 1)
+// 	fs.writeFileSync(dbJSON, JSON.stringify(feeds), "utf-8", (err) => {
+// 		console.log(err)
+// 	})
+// }

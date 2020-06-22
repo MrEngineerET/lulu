@@ -10,15 +10,14 @@ const rssURL = "https://addisfortune.news/feed/"
 
 const latestItem = path.join(__dirname, "latestAddisFortuneItem.json")
 const dbJSON = path.join(__dirname, "addisFortuneNEWS.json")
-let remove = "removeAddis"
 
 let parser = new Parser()
 
 // button for posts with their own image
 let btn = [
 	[
-		{ text: "#Ethiopian_Business_Daily", callback_data: "post2merkato" },
-		{ text: "remove", callback_data: remove },
+		{ text: "#Ethiopian_Business_Daily", callback_data: "postAddisFortune" },
+		{ text: "remove", callback_data: "remove" },
 	],
 ]
 // button for posts without their own image
@@ -30,7 +29,7 @@ let btn4noImg = [
 		},
 		{
 			text: "Remove",
-			callback_data: remove,
+			callback_data: "remove",
 		},
 	],
 	[
@@ -187,38 +186,6 @@ exports.fetchAndPost = async () => {
 		console.log(err)
 	}
 }
-
-bot.bot.action(remove, (ctx) => {
-	ctx.deleteMessage()
-	let caption = ctx.update.callback_query.message.caption
-	let id = caption.slice(caption.indexOf("__id") + 5, caption.indexOf("@#$%"))
-	deleteDataFromSavedFile(id)
-})
-bot.bot.action("postAddisFortune", addisFortunePostToChannel)
-
-function addisFortunePostToChannel(ctx) {
-	ctx.answerCbQuery()
-	let caption = ctx.update.callback_query.message.caption
-	let id = caption.slice(caption.indexOf("__id") + 5, caption.indexOf("@#$%"))
-	let data = getDataFromSavedFile(id)
-	if (data) {
-		let photoURL = data.photo.location
-		if (data.photo.source == "local") {
-			let imgName = ctx.update.callback_query.data
-			photoURL = path.join(__dirname, "..", "..", "images", `${imgName}.jpg`)
-		}
-
-		data.caption.to = "toChannel"
-		data.caption.PhotoURL = photoURL
-		data.photo.location = photoURL
-		data.chatID = process.env.testChannelID
-		bot.post(data).catch((err) => {
-			console.log(err)
-		})
-	}
-	ctx.deleteMessage()
-}
-
 function saveFeeds(feeds) {
 	data = JSON.parse(fs.readFileSync(dbJSON), "utf-8")
 	feeds.forEach((feed) => {
@@ -229,21 +196,63 @@ function saveFeeds(feeds) {
 	})
 }
 
-function getDataFromSavedFile(id) {
-	let feeds = JSON.parse(fs.readFileSync(dbJSON), "utf-8")
-	feed = feeds.find((el) => el.caption.__id == id)
-	feeds.splice(feeds.indexOf(feed), 1)
-	fs.writeFileSync(dbJSON, JSON.stringify(feeds), "utf-8", (err) => {
-		console.log(err)
-	})
-	return feed
-}
+// bot.bot.action("postAddisFortune", addisFortuneChannelPostController)
 
-function deleteDataFromSavedFile(id) {
-	let feeds = JSON.parse(fs.readFileSync(dbJSON), "utf-8")
-	feed = feeds.find((el) => el.__id == id)
-	feeds.splice(feeds.indexOf(feed), 1)
-	fs.writeFileSync(dbJONN, JSON.stringify(feeds), "utf-8", (err) => {
-		console.log(err)
-	})
-}
+// bot.bot.action("DNEth", addisFortuneChannelPostController)
+// bot.bot.action("EPEth", addisFortuneChannelPostController)
+// bot.bot.action("DNInt", addisFortuneChannelPostController)
+// bot.bot.action("EPInt", addisFortuneChannelPostController)
+// bot.bot.action("NREth", addisFortuneChannelPostController)
+// bot.bot.action("NUEth", addisFortuneChannelPostController)
+// bot.bot.action("NRInt", addisFortuneChannelPostController)
+// bot.bot.action("NUInt", addisFortuneChannelPostController)
+// bot.bot.action("BNEth", addisFortuneChannelPostController)
+// bot.bot.action("BNInt", addisFortuneChannelPostController)
+// bot.bot.action("Evnt", addisFortuneChannelPostController)
+// bot.bot.action("Condo", addisFortuneChannelPostController)
+// bot.bot.action("Oil", addisFortuneChannelPostController)
+// bot.bot.action("Tech", addisFortuneChannelPostController)
+// bot.bot.action("Transp", addisFortuneChannelPostController)
+// bot.bot.action("Trsm", addisFortuneChannelPostController)
+
+// function addisFortuneChannelPostController(ctx) {
+// 	ctx.answerCbQuery()
+// 	let caption = ctx.update.callback_query.message.caption
+// 	let id = caption.slice(caption.indexOf("__id") + 5, caption.indexOf("@#$%"))
+// 	let data = getDataFromSavedFile(id)
+// 	if (data) {
+// 		let photoURL = data.photo.location
+// 		if (data.photo.source == "local") {
+// 			let imgName = ctx.update.callback_query.data
+// 			photoURL = path.join(__dirname, "..", "..", "images", `${imgName}.jpg`)
+// 		}
+
+// 		data.caption.to = "toChannel"
+// 		data.caption.PhotoURL = photoURL
+// 		data.photo.location = photoURL
+// 		data.chatID = process.env.testChannelID
+// 		bot.post(data).catch((err) => {
+// 			console.log(err)
+// 		})
+// 	}
+// 	ctx.deleteMessage()
+// }
+//
+// function getDataFromSavedFile(id) {
+// 	let feeds = JSON.parse(fs.readFileSync(dbJSON), "utf-8")
+// 	feed = feeds.find((el) => el.caption.__id == id)
+// 	feeds.splice(feeds.indexOf(feed), 1)
+// 	fs.writeFileSync(dbJSON, JSON.stringify(feeds), "utf-8", (err) => {
+// 		console.log(err)
+// 	})
+// 	return feed
+// }
+
+// function deleteDataFromSavedFile(id) {
+// 	let feeds = JSON.parse(fs.readFileSync(dbJSON), "utf-8")
+// 	feed = feeds.find((el) => el.__id == id)
+// 	feeds.splice(feeds.indexOf(feed), 1)
+// 	fs.writeFileSync(dbJSON, JSON.stringify(feeds), "utf-8", (err) => {
+// 		console.log(err)
+// 	})
+// }
