@@ -1,9 +1,16 @@
 const fs = require("fs")
-const Parser = require("rss-parser")
 const path = require("path")
 
+const Parser = require("rss-parser")
+const shortid = require("shortid")
+
 const bot = require("./../../bot")
+
 const rssURL = "https://www.whats-on-netflix.com/feed/"
+
+const latestItem = path.join(__dirname, "latestNetflixItem.json")
+const dbJSON = path.join(__dirname, "netflixNEWS.json")
+let remove = "removeNtx"
 
 let parser = new Parser()
 
@@ -15,7 +22,7 @@ let btn = [
 		},
 		{
 			text: "remove",
-			callback_data: "remove",
+			callback_data: remove,
 		},
 	],
 ]
@@ -41,9 +48,9 @@ let prepareFeeds = function (feeds) {
 		let caption = {
 			title: feed.title,
 			description: feed.content.slice(feed.content.indexOf("</p>") + 4).trim(),
-			sourceURL: feed.link,
-			photoURL: imageLocation.includes("nopic") ? "nopic.jpg" : imageLocation,
+			// date: feed.date,
 			to: "toGroup",
+			__id: shortid.generate(),
 		}
 
 		let data = {
@@ -53,7 +60,9 @@ let prepareFeeds = function (feeds) {
 				location: imageLocation,
 			},
 			chatID: process.env.testGroupID,
+			// buttons: imageSource == "remote" ? btn : btn4noImg,
 			buttons: btn,
+			sourceURL: feed.link,
 		}
 		return data
 	})
@@ -61,9 +70,7 @@ let prepareFeeds = function (feeds) {
 
 exports.fetchAndPost = async () => {
 	try {
-		let latestNetflixItem = JSON.parse(
-			fs.readFileSync(path.join(__dirname, "latestNetflixItem.json"), "utf-8")
-		)
+		let latestNetflixItem = JSON.parse(fs.readFileSync(latestItem, "utf-8"))
 		let latestNetflixItemTitle = latestNetflixItem.title
 
 		let newNewsFeed = []
@@ -88,6 +95,7 @@ exports.fetchAndPost = async () => {
 
 		if (newNewsFeed.length != 0) {
 			let preparedFeeds = prepareFeeds(newNewsFeed)
+			saveFeeds(preparedFeeds)
 			preparedFeeds.forEach((item) => {
 				bot.post(item).catch((err) => {
 					console.log(err)
@@ -95,49 +103,68 @@ exports.fetchAndPost = async () => {
 			})
 		}
 
-		fs.writeFileSync(
-			path.join(__dirname, "latestNetflixItem.json"),
-			JSON.stringify(newLatestNetflixItem),
-			"utf-8"
-		)
+		fs.writeFileSync(latestItem, JSON.stringify(newLatestNetflixItem), "utf-8")
 	} catch (err) {
 		console.log(err)
 	}
 }
 
+bot.bot.action(remove, (ctx) => {
+	ctx.deleteMessage()
+	let caption = ctx.update.callback_query.message.caption
+	let id = caption.slice(caption.indexOf("__id") + 5, caption.indexOf("@#$%"))
+	deleteDataFromSavedFile(id)
+})
 bot.bot.action("postNetflix", netflixPostToChannel)
+
 function netflixPostToChannel(ctx) {
-	const SPLIT = "@#$"
-	let dataArr = ctx.update.callback_query.message.caption.split(SPLIT)
+	ctx.answerCbQuery()
+	let caption = ctx.update.callback_query.message.caption
+	let id = caption.slice(caption.indexOf("__id") + 5, caption.indexOf("@#$%"))
+	let data = getDataFromSavedFile(id)
+	if (data) {
+		let photoURL = data.photo.location
+		if (data.photo.source == "local") {
+			let imgName = ctx.update.callback_query.data
+			photoURL = path.join(__dirname, "..", "..", "images", `${imgName}.jpg`)
+		}
 
-	let title = dataArr[0].replace(/\n+/g, "").replace(/^\s+/g, "")
-	let description = dataArr[1].replace(/\n+/g, "").replace(/^\s+/g, "")
-	let sourceURL = ctx.update.callback_query.message.caption_entities[2].url
-	let photoURL = ctx.update.callback_query.message.caption_entities[3].url
-	let source = "remote"
-	if (photoURL == "nopic.jpg") {
-		photoURL = path.join(__dirname, "netflix.jpg")
-		source = "local"
+		data.caption.to = "toChannel"
+		data.caption.PhotoURL = photoURL
+		data.photo.location = photoURL
+		data.chatID = process.env.testChannelID
+		bot.post(data).catch((err) => {
+			console.log(err)
+		})
 	}
-	let caption = {
-		title,
-		description,
-		photoURL,
-		sourceURL,
-		to: "toChannel",
-	}
-	let data = {
-		photo: {
-			source,
-			location: photoURL,
-		},
-		chatID: -1001448681325,
-		caption,
-	}
+	ctx.deleteMessage()
+}
 
-	bot.post(data).catch((err) => {
+function saveFeeds(feeds) {
+	data = JSON.parse(fs.readFileSync(dbJSON), "utf-8")
+	feeds.forEach((feed) => {
+		data.push(feed)
+	})
+	fs.writeFileSync(dbJSON, JSON.stringify(data), "utf-8", (err) => {
 		console.log(err)
 	})
+}
 
-	ctx.deleteMessage()
+function getDataFromSavedFile(id) {
+	let feeds = JSON.parse(fs.readFileSync(dbJSON), "utf-8")
+	feed = feeds.find((el) => el.caption.__id == id)
+	feeds.splice(feeds.indexOf(feed), 1)
+	fs.writeFileSync(dbJSON, JSON.stringify(feeds), "utf-8", (err) => {
+		console.log(err)
+	})
+	return feed
+}
+
+function deleteDataFromSavedFile(id) {
+	let feeds = JSON.parse(fs.readFileSync(dbJSON), "utf-8")
+	feed = feeds.find((el) => el.__id == id)
+	feeds.splice(feeds.indexOf(feed), 1)
+	fs.writeFileSync(dbJONN, JSON.stringify(feeds), "utf-8", (err) => {
+		console.log(err)
+	})
 }

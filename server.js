@@ -5,6 +5,7 @@ const { bot } = require("./bot")
 
 const netflix = require("./RSSWebsites/netflix/netflix")
 const merkato2 = require("./RSSWebsites/businessEnglish/2merkato/2merkato")
+const addisFortune = require("./RSSWebsites/businessEnglish/addisFortune/addisFortune")
 
 // if (process.env.NODE_ENV == "production") {
 // 	netflix.fetchAndPost()
@@ -41,7 +42,8 @@ const merkato2 = require("./RSSWebsites/businessEnglish/2merkato/2merkato")
 // 	setInterval(oneMinuteFunction, oneMinute)
 // }
 
-merkato2.fetchAndPost()
+// merkato2.fetchAndPost()
 // netflix.fetchAndPost()
+addisFortune.fetchAndPost()
 
 bot.launch()

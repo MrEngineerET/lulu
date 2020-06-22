@@ -1,18 +1,23 @@
 const fs = require("fs")
 const path = require("path")
+
 const shortid = require("shortid")
 const Parser = require("rss-parser")
 
 const bot = require("../../../bot")
+const rssURL = "http://fetchrss.com/rss/5ecc08fa8a93f878358b45675ecc085c8a93f86a2e8b4567.xml"
+
+const latestItem = path.join(__dirname, "latest2merkatoItem.json")
+const dbJSON = path.join(__dirname, "2merkatoNEWS.json")
+let remove = "remove2m"
 
 let parser = new Parser()
-const rssURL = "http://fetchrss.com/rss/5ecc08fa8a93f878358b45675ecc085c8a93f86a2e8b4567.xml"
 
 // button for posts with their own image
 let btn = [
 	[
 		{ text: "#Ethiopian_Business_Daily", callback_data: "post2merkato" },
-		{ text: "remove", callback_data: "remove" },
+		{ text: "remove", callback_data: remove },
 	],
 ]
 // button for posts without their own image
@@ -24,7 +29,7 @@ let btn4noImg = [
 		},
 		{
 			text: "Remove",
-			callback_data: "remove",
+			callback_data: remove,
 		},
 	],
 	[
@@ -143,9 +148,7 @@ let prepareFeeds = function (feeds) {
 
 exports.fetchAndPost = async function () {
 	try {
-		let latest2MerkatoItem = JSON.parse(
-			fs.readFileSync(path.join(__dirname, "latest2merkatoItem.json"), "utf-8")
-		)
+		let latest2MerkatoItem = JSON.parse(fs.readFileSync(latestItem, "utf-8"))
 
 		let latest2merkatoItemTitle = latest2MerkatoItem.title
 
@@ -179,11 +182,7 @@ exports.fetchAndPost = async function () {
 			})
 		}
 
-		fs.writeFileSync(
-			path.join(__dirname, "latest2merkatoItem.json"),
-			JSON.stringify(newLatest2merkatoItem),
-			"utf-8"
-		)
+		fs.writeFileSync(latestItem, JSON.stringify(newLatest2merkatoItem), "utf-8")
 	} catch (err) {
 		console.log(err)
 	}
@@ -207,7 +206,7 @@ bot.bot.action("Tech", merkatoChannelPostController)
 bot.bot.action("Transp", merkatoChannelPostController)
 bot.bot.action("Trsm", merkatoChannelPostController)
 
-bot.bot.action("remove", (ctx) => {
+bot.bot.action(remove, (ctx) => {
 	ctx.deleteMessage()
 	let caption = ctx.update.callback_query.message.caption
 	let id = caption.slice(caption.indexOf("__id") + 5, caption.indexOf("@#$%"))
@@ -219,63 +218,49 @@ function merkatoChannelPostController(ctx) {
 	let caption = ctx.update.callback_query.message.caption
 	let id = caption.slice(caption.indexOf("__id") + 5, caption.indexOf("@#$%"))
 	let data = getDataFromSavedFile(id)
+	if (data) {
+		let photoURL = data.photo.location
+		if (data.photo.source == "local") {
+			let imgName = ctx.update.callback_query.data
+			photoURL = path.join(__dirname, "..", "..", "images", `${imgName}.jpg`)
+		}
 
-	let photoURL = data.photo.location
-	if (data.photo.source == "local") {
-		let imgName = ctx.update.callback_query.data
-		photoURL = path.join(__dirname, "..", "..", "images", `${imgName}.jpg`)
+		data.caption.to = "toChannel"
+		data.caption.PhotoURL = photoURL
+		data.photo.location = photoURL
+		data.chatID = process.env.testChannelID
+		bot.post(data).catch((err) => {
+			console.log(err)
+		})
 	}
-
-	data.caption.to = "toChannel"
-	data.caption.PhotoURL = photoURL
-	data.photo.location = photoURL
-	data.chatID = process.env.testChannelID
-	bot.post(data).catch((err) => {
-		console.log(err)
-	})
 	ctx.deleteMessage()
 }
 
 function saveFeeds(feeds) {
-	data = JSON.parse(fs.readFileSync(path.join(__dirname, "2merkatoNEWS.json")), "utf-8")
+	data = JSON.parse(fs.readFileSync(dbJSON), "utf-8")
 	feeds.forEach((feed) => {
 		data.push(feed)
 	})
-	fs.writeFileSync(
-		path.join(__dirname, "2merkatoNEWS.json"),
-		JSON.stringify(data),
-		"utf-8",
-		(err) => {
-			console.log(err)
-		}
-	)
+	fs.writeFileSync(dbJSON, JSON.stringify(data), "utf-8", (err) => {
+		console.log(err)
+	})
 }
 
 function getDataFromSavedFile(id) {
-	let feeds = JSON.parse(fs.readFileSync(path.join(__dirname, "2merkatoNEWS.json")), "utf-8")
+	let feeds = JSON.parse(fs.readFileSync(dbJSON), "utf-8")
 	feed = feeds.find((el) => el.caption.__id == id)
 	feeds.splice(feeds.indexOf(feed), 1)
-	fs.writeFileSync(
-		path.join(__dirname, "2merkatoNEWS.json"),
-		JSON.stringify(feeds),
-		"utf-8",
-		(err) => {
-			console.log(err)
-		}
-	)
+	fs.writeFileSync(dbJSON, JSON.stringify(feeds), "utf-8", (err) => {
+		console.log(err)
+	})
 	return feed
 }
 
 function deleteDataFromSavedFile(id) {
-	let feeds = JSON.parse(fs.readFileSync(path.join(__dirname, "2merkatoNEWS.json")), "utf-8")
+	let feeds = JSON.parse(fs.readFileSync(dbJSON), "utf-8")
 	feed = feeds.find((el) => el.__id == id)
 	feeds.splice(feeds.indexOf(feed), 1)
-	fs.writeFileSync(
-		path.join(__dirname, "2merkatoNEWS.json"),
-		JSON.stringify(feeds),
-		"utf-8",
-		(err) => {
-			console.log(err)
-		}
-	)
+	fs.writeFileSync(dbJSON, JSON.stringify(feeds), "utf-8", (err) => {
+		console.log(err)
+	})
 }
