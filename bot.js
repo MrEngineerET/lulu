@@ -115,7 +115,7 @@ function channelPostController(ctx) {
 		let photoURL = data.photo.location
 		if (data.photo.source == "local") {
 			let imgName = ctx.update.callback_query.data
-			photoURL = path.join(__dirname, "..", "..", "images", `${imgName}.jpg`)
+			photoURL = path.join(__dirname, "data", "images", `${imgName}.jpg`)
 		}
 
 		data.caption.to = "toChannel"
