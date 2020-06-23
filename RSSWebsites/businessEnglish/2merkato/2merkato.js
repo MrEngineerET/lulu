@@ -2,8 +2,11 @@ const fs = require("fs")
 const path = require("path")
 
 const Parser = require("rss-parser")
+const shortid = require("shortid")
 
 const bot = require("../../../bot")
+const siteController = require("./../../Controller/sitesController")
+
 const rssURL = "http://fetchrss.com/rss/5ecc08fa8a93f878358b45675ecc085c8a93f86a2e8b4567.xml"
 
 const latestItem = path.join(__dirname, "latest2merkatoItem.json")
@@ -103,6 +106,46 @@ let btn4noImg = [
 	],
 ]
 
+let prepareFeeds = function (feeds) {
+	return feeds.map((feed) => {
+		let imageLocation = ""
+		let imageSource = ""
+		let start = feed.content.indexOf('src="https:') + 5
+		let end = feed.content.indexOf(".jpg")
+		if (end == -1) {
+			end = feed.content.indexOf(".png")
+		}
+		if (start == -1 || end == -1) {
+			imageLocation = path.join(__dirname, "..", "..", "..", "data", "images", "nopic.jpg")
+			imageSource = "local"
+		} else {
+			end += 4
+			imageLocation = feed.content.slice(start, end)
+			imageSource = "remote"
+		}
+
+		let caption = {
+			title: feed.title,
+			description: feed.contentSnippet.replace("(Feed generated with FetchRSS)", "").trim(),
+			date: feed.pubDate.slice(0, feed.pubDate.indexOf("2020")).trim(),
+			to: "toGroup",
+			__id: shortid.generate(),
+		}
+		let data = {
+			caption,
+			photo: {
+				source: imageSource,
+				location: imageLocation,
+			},
+			chatID: process.env.testGroupID,
+			buttons: imageSource == "remote" ? btn : btn4noImg,
+			sourceURL: feed.link,
+		}
+
+		return data
+	})
+}
+
 exports.fetchAndPost = async function () {
 	console.log("2merkato In")
 	try {
@@ -131,7 +174,7 @@ exports.fetchAndPost = async function () {
 		}
 
 		if (newNewsFeed.length != 0) {
-			let preparedFeeds = siteController.prepareFeeds(newNewsFeed)
+			let preparedFeeds = prepareFeeds(newNewsFeed, "2merkato")
 			siteController.saveFeeds(preparedFeeds)
 			preparedFeeds.forEach((item) => {
 				bot.post(item).catch((err) => {

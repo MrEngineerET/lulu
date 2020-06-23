@@ -1,10 +1,11 @@
 const path = require("path")
+const fs = require("fs")
 
 const Telegraf = require("telegraf")
 
 const bot = new Telegraf("1295703321:AAGfhPgd9sf7o8jW_XL8o1OO9aekYKjbS0o")
 
-let dbJSON = path.join(__dirname, "..", "data", "NEWS.json")
+let dbJSON = path.join(__dirname, "data", "NEWS.json")
 
 bot.action("noResponse", (ctx) => {
 	ctx.answerCbQuery()
@@ -86,7 +87,7 @@ let post = async function ({ caption, photo, chatID, buttons, sourceURL }) {
 	}
 }
 
-let prepareCaption = function (caption) {
+function prepareCaption(caption) {
 	if (caption.to == "toGroup") {
 		return `
     <u><b>${caption.title}</b></u>
@@ -122,7 +123,7 @@ function channelPostController(ctx) {
 		data.caption.PhotoURL = photoURL
 		data.photo.location = photoURL
 		data.chatID = process.env.testChannelID
-		bot.post(data).catch((err) => {
+		post(data).catch((err) => {
 			console.log(err)
 		})
 	}
