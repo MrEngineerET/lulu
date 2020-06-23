@@ -114,7 +114,9 @@ let btnNetflix = [
 exports.saveFeeds = function (feeds) {
 	data = JSON.parse(fs.readFileSync(dbJSON), "utf-8")
 	feeds.forEach((feed) => {
-		data.push(feed)
+		x = { ...feed }
+		delete x.buttons
+		data.push(x)
 	})
 	fs.writeFileSync(dbJSON, JSON.stringify(data), "utf-8", (err) => {
 		console.log(err)

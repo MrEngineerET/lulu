@@ -9,14 +9,13 @@ const siteController = require("./../../Controller/sitesController")
 
 const rssURL = "http://fetchrss.com/rss/5ecc08fa8a93f878358b45675ecc085c8a93f86a2e8b4567.xml"
 
-const latestItem = path.join(__dirname, "latest2merkatoItem.json")
-const dbJSON = path.join(__dirname, "..", "..", "..", "data", "NEWS.json")
+const latestTitles = path.join(__dirname, "..", "..", "..", "data", "latest.json")
 let parser = new Parser()
 
 // button for posts with their own image
 let btn = [
 	[
-		{ text: "#Ethiopian_Business_Daily", callback_data: "post2merkato" },
+		{ text: "#Ethiopian_Business_Daily", callback_data: "post2EBD" },
 		{ text: "remove", callback_data: "remove" },
 	],
 ]
@@ -149,12 +148,10 @@ let prepareFeeds = function (feeds) {
 exports.fetchAndPost = async function () {
 	console.log("2merkato In")
 	try {
-		let latest2MerkatoItem = JSON.parse(fs.readFileSync(latestItem, "utf-8"))
-
-		let latest2merkatoItemTitle = latest2MerkatoItem.title
-
-		let newNewsFeed = []
-		let newLatest2merkatoItem = latest2MerkatoItem
+		let website = "2merkato"
+		let titles = JSON.parse(fs.readFileSync(latestTitles, "utf-8"))
+		let latestTitle = titles.find((el) => el.website == website).latestTitle
+		let newNEWS = []
 
 		let feed = await parser.parseURL(rssURL)
 
@@ -162,19 +159,17 @@ exports.fetchAndPost = async function () {
 
 		let latest = true
 		for (let i = 0; i < items.length; i++) {
-			if (items[i].title != latest2merkatoItemTitle) {
-				newNewsFeed.push(items[i])
+			if (items[i].title != latestTitle) {
+				newNEWS.push(items[i])
 				if (latest) {
-					newLatest2merkatoItem = items[i]
+					latestTitle = items[i].title
 					latest = false
 				}
-			} else {
-				break
-			}
+			} else break
 		}
 
-		if (newNewsFeed.length != 0) {
-			let preparedFeeds = prepareFeeds(newNewsFeed, "2merkato")
+		if (newNEWS.length != 0) {
+			let preparedFeeds = prepareFeeds(newNEWS)
 			siteController.saveFeeds(preparedFeeds)
 			preparedFeeds.forEach((item) => {
 				bot.post(item).catch((err) => {
@@ -182,8 +177,8 @@ exports.fetchAndPost = async function () {
 				})
 			})
 		}
-
-		fs.writeFileSync(latestItem, JSON.stringify(newLatest2merkatoItem), "utf-8")
+		titles[titles.findIndex((el) => el.website == website)].latestTitle = latestTitle
+		fs.writeFileSync(latestTitles, JSON.stringify(titles), "utf-8")
 	} catch (err) {
 		console.log(err)
 	}

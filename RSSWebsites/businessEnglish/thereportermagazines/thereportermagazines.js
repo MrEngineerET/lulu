@@ -7,7 +7,7 @@ const Parser = require("rss-parser")
 const bot = require("../../../bot")
 const siteController = require("./../../Controller/sitesController")
 
-const rssURL = "https://addisfortune.news/feed/"
+rssURL = "https://thereportermagazines.com/category/business/feed/"
 
 const latestTitles = path.join(__dirname, "..", "..", "..", "data", "latest.json")
 
@@ -149,7 +149,7 @@ let prepareFeeds = function (feeds) {
 exports.fetchAndPost = async () => {
 	console.log("addis fortune In")
 	try {
-		let website = "addisFortune"
+		let website = "thereportermagazines"
 		let titles = JSON.parse(fs.readFileSync(latestTitles, "utf-8"))
 		let latestTitle = titles.find((el) => el.website == website).latestTitle
 		let newNEWS = []

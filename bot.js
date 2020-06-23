@@ -11,8 +11,8 @@ bot.action("noResponse", (ctx) => {
 	ctx.answerCbQuery()
 })
 
-bot.action("postNetflix", channelPostController)
-bot.action("post2merkato", channelPostController)
+bot.action("post2Netflix", channelPostController)
+bot.action("post2EBD", channelPostController)
 bot.action("DNEth", channelPostController)
 bot.action("EPEth", channelPostController)
 bot.action("DNInt", channelPostController)

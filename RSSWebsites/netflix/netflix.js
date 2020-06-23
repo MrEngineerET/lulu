@@ -7,18 +7,15 @@ const shortid = require("shortid")
 const bot = require("./../../bot")
 const siteController = require("./../Controller/sitesController")
 
+const latestTitles = path.join(__dirname, "..", "..", "..", "data", "latest.json")
 const rssURL = "https://www.whats-on-netflix.com/feed/"
 
-const latestItem = path.join(__dirname, "latestNetflixItem.json")
-const dbJSON = path.join(__dirname, "..", "..", "data", "NEWS.json")
-
 let parser = new Parser()
-
 let btn = [
 	[
 		{
 			text: "#Netflix_Addis",
-			callback_data: "postNetflix",
+			callback_data: "post2Netflix",
 		},
 		{
 			text: "remove",
@@ -70,11 +67,10 @@ let prepareFeeds = function (feeds) {
 exports.fetchAndPost = async () => {
 	console.log("netflix In")
 	try {
-		let latestNetflixItem = JSON.parse(fs.readFileSync(latestItem, "utf-8"))
-		let latestNetflixItemTitle = latestNetflixItem.title
-
-		let newNewsFeed = []
-		let newLatestNetflixItem = latestNetflixItem
+		let website = "netflix"
+		let titles = JSON.parse(fs.readFileSync(latestTitles, "utf-8"))
+		let latestTitle = titles.find((el) => el.website == website).latestTitle
+		let newNEWS = []
 
 		let feed = await parser.parseURL(rssURL)
 
@@ -82,19 +78,17 @@ exports.fetchAndPost = async () => {
 
 		let latest = true
 		for (let i = 0; i < items.length; i++) {
-			if (items[i].title != latestNetflixItemTitle) {
-				newNewsFeed.push(items[i])
+			if (items[i].title != latestTitle) {
+				newNEWS.push(items[i])
 				if (latest) {
-					newLatestNetflixItem = items[i]
+					latestTitle = items[i].title
 					latest = false
 				}
-			} else {
-				break
-			}
+			} else break
 		}
 
-		if (newNewsFeed.length != 0) {
-			let preparedFeeds = prepareFeeds(newNewsFeed, "netflix")
+		if (newNEWS.length != 0) {
+			let preparedFeeds = prepareFeeds(newNEWS)
 			siteController.saveFeeds(preparedFeeds)
 			preparedFeeds.forEach((item) => {
 				bot.post(item).catch((err) => {
@@ -102,7 +96,8 @@ exports.fetchAndPost = async () => {
 				})
 			})
 		}
-		fs.writeFileSync(latestItem, JSON.stringify(newLatestNetflixItem), "utf-8")
+		titles[titles.findIndex((el) => el.website == website)].latestTitle = latestTitle
+		fs.writeFileSync(latestTitles, JSON.stringify(titles), "utf-8")
 	} catch (err) {
 		console.log(err)
 	}
