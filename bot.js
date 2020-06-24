@@ -29,6 +29,10 @@ bot.action("Oil", channelPostController)
 bot.action("Tech", channelPostController)
 bot.action("Transp", channelPostController)
 bot.action("Trsm", channelPostController)
+bot.action("Fin", channelPostController)
+bot.action("Contr", channelPostController)
+bot.action("Covid", channelPostController)
+bot.action("Tip", channelPostController)
 
 bot.action("remove", (ctx) => {
 	ctx.deleteMessage()

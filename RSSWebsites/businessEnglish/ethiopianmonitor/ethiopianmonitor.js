@@ -7,7 +7,7 @@ const Parser = require("rss-parser")
 const bot = require("../../../bot")
 const siteController = require("./../../Controller/sitesController")
 
-const rssURL = "https://newbusinessethiopia.com/topics/economy/feed/"
+let rssURL = "https://ethiopianmonitor.com/feed/"
 const latestTitles = path.join(__dirname, "..", "..", "..", "data", "latest.json")
 
 let parser = new Parser()
@@ -164,9 +164,9 @@ let prepareFeeds = function (feeds) {
 }
 
 exports.fetchAndPost = async () => {
-	console.log("new Business Ethiopia In")
+	console.log("ethiopian monitor In")
 	try {
-		let website = "newBusinessEthiopia"
+		let website = "ethiopianmonitor"
 		let titles = JSON.parse(fs.readFileSync(latestTitles, "utf-8"))
 		let latestTitle = titles.find((el) => el.website == website).latestTitle
 		let newNEWS = []

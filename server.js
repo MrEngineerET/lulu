@@ -4,21 +4,27 @@ require("dotenv").config({
 const { bot } = require("./bot")
 
 const netflix = require("./RSSWebsites/netflix/netflix")
-const merkato2 = require("./RSSWebsites/businessEnglish/2merkato/2merkato")
+const thereportermagazines = require("./RSSWebsites/businessEnglish/thereportermagazines/thereportermagazines")
 const addisFortune = require("./RSSWebsites/businessEnglish/addisFortune/addisFortune")
 const newBusinessEthiopia = require("./RSSWebsites/businessEnglish/newBusinessEthiopia/newBusinessEthiopia")
-const thereportermagazines = require("./RSSWebsites/businessEnglish/thereportermagazines/thereportermagazines")
+const furtherafrica = require("./RSSWebsites/businessEnglish/furtherafrica/furtherafrica")
+const ethiopianmonitor = require("./RSSWebsites/businessEnglish/ethiopianmonitor/ethiopianmonitor")
+const merkato2 = require("./RSSWebsites/businessEnglish/2merkato/2merkato")
 
 if (process.env.NODE_ENV == "production") {
 	netflix.fetchAndPost()
 	merkato2.fetchAndPost()
 
+	let fiveMinute = 1000 * 60 * 5
 	let tenMinute = 1000 * 60 * 10
 	let fifteenMinute = 1000 * 60 * 15
 	let twentyFiveMinute = 1000 * 60 * 25
 
 	let oneHour = 1000 * 60 * 60 * 1
 	let twoHour = 1000 * 60 * 60 * 2
+	let threeHour = 1000 * 60 * 60 * 3
+	let fourHour = 1000 * 60 * 60 * 4
+	let fiveHour = 1000 * 60 * 60 * 5
 	let sixHour = 1000 * 60 * 60 * 6
 
 	function oneHourFunction() {
@@ -29,9 +35,23 @@ if (process.env.NODE_ENV == "production") {
 
 	function twoHourFunction() {
 		addisFortune.fetchAndPost()
-		newBusinessEthiopia.fetchAndPost()
 	}
 	setInterval(twoHourFunction, twoHour + tenMinute)
+
+	function threeHourFunction() {
+		ethiopianmonitor.fetchAndPost()
+	}
+	setInterval(threeHourFunction, threeHour + fiveMinute)
+
+	function fourHourFunction() {
+		furtherafrica.fetchAndPost()
+	}
+	setInterval(fourHourFunction, fourHour + twentyFiveMinute)
+
+	function fiveHourFunction() {
+		newBusinessEthiopia.fetchAndPost()
+	}
+	setInterval(fiveHourFunction, fiveHour + tenMinute)
 
 	function sixHourFunction() {
 		merkato2.fetchAndPost()

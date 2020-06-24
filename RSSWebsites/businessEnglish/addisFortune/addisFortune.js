@@ -104,6 +104,24 @@ let btn4noImg = [
 			callback_data: "Trsm",
 		},
 	],
+	[
+		{
+			text: "Contr",
+			callback_data: "Contr",
+		},
+		{
+			text: "Covid",
+			callback_data: "Covid",
+		},
+		{
+			text: "Fin",
+			callback_data: "Fin",
+		},
+		{
+			text: "Tip",
+			callback_data: "Tip",
+		},
+	],
 ]
 
 let prepareFeeds = function (feeds) {
@@ -178,6 +196,7 @@ exports.fetchAndPost = async () => {
 				})
 			})
 		}
+		titles = JSON.parse(fs.readFileSync(latestTitles, "utf-8"))
 		titles[titles.findIndex((el) => el.website == website)].latestTitle = latestTitle
 		fs.writeFileSync(latestTitles, JSON.stringify(titles), "utf-8")
 	} catch (err) {

@@ -7,7 +7,7 @@ const shortid = require("shortid")
 const bot = require("./../../bot")
 const siteController = require("./../Controller/sitesController")
 
-const latestTitles = path.join(__dirname, "..", "..", "..", "data", "latest.json")
+const latestTitles = path.join(__dirname, "..", "..", "data", "latest.json")
 const rssURL = "https://www.whats-on-netflix.com/feed/"
 
 let parser = new Parser()
@@ -96,6 +96,7 @@ exports.fetchAndPost = async () => {
 				})
 			})
 		}
+		titles = JSON.parse(fs.readFileSync(latestTitles, "utf-8"))
 		titles[titles.findIndex((el) => el.website == website)].latestTitle = latestTitle
 		fs.writeFileSync(latestTitles, JSON.stringify(titles), "utf-8")
 	} catch (err) {
