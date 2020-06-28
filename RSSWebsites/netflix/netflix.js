@@ -57,8 +57,8 @@ let prepareFeeds = function (feeds) {
 				location: imageLocation,
 			},
 			chatID: process.env.testGroupID,
-			// buttons: imageSource == "remote" ? btn : btn4noImg,
-			buttons: btn,
+			buttons: imageSource == "remote" ? btn : btn4noImg,
+			// buttons: btn,
 			sourceURL: feed.link,
 		}
 		return data

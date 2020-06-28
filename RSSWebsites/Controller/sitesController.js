@@ -123,50 +123,50 @@ exports.saveFeeds = function (feeds) {
 	})
 }
 
-exports.prepareFeeds = function (feeds, source) {
-	return feeds.map((feed) => {
-		let imageLocation = ""
-		let imageSource = ""
-		let start = feed.content.indexOf('src="https:') + 5
-		let end = feed.content.indexOf(".jpg")
-		if (end == -1) {
-			end = feed.content.indexOf(".png")
-		}
-		if (start == -1 || end == -1) {
-			imageLocation = path.join(__dirname, "..", "..", "data", "images", "nopic.jpg")
-			imageSource = "local"
-		} else {
-			end += 4
-			imageLocation = feed.content.slice(start, end)
-			imageSource = "remote"
-		}
+// exports.prepareFeeds = function (feeds, source) {
+// 	return feeds.map((feed) => {
+// 		let imageLocation = ""
+// 		let imageSource = ""
+// 		let start = feed.content.indexOf('src="https:') + 5
+// 		let end = feed.content.indexOf(".jpg")
+// 		if (end == -1) {
+// 			end = feed.content.indexOf(".png")
+// 		}
+// 		if (start == -1 || end == -1) {
+// 			imageLocation = path.join(__dirname, "..", "..", "data", "images", "nopic.jpg")
+// 			imageSource = "local"
+// 		} else {
+// 			end += 4
+// 			imageLocation = feed.content.slice(start, end)
+// 			imageSource = "remote"
+// 		}
 
-		let buttons = imageSource == "remote" ? btnBusiness : btn4noImgBusiness
-		let description = feed.content.slice(feed.content.indexOf("</p>") + 4).trim()
-		if (source == "netflix") {
-			buttons = btnNetflix
-		} else if (source == "2merkato") {
-			description = feed.contentSnippet.replace("(Feed generated with FetchRSS)", "").trim()
-		}
+// 		let buttons = imageSource == "remote" ? btnBusiness : btn4noImgBusiness
+// 		let description = feed.content.slice(feed.content.indexOf("</p>") + 4).trim()
+// 		if (source == "netflix") {
+// 			buttons = btnNetflix
+// 		} else if (source == "2merkato") {
+// 			description = feed.contentSnippet.replace("(Feed generated with FetchRSS)", "").trim()
+// 		}
 
-		let caption = {
-			title: feed.title,
-			description,
-			// date: feed.date,
-			to: "toGroup",
-			__id: shortid.generate(),
-		}
+// 		let caption = {
+// 			title: feed.title,
+// 			description,
+// 			// date: feed.date,
+// 			to: "toGroup",
+// 			__id: shortid.generate(),
+// 		}
 
-		let data = {
-			caption,
-			photo: {
-				source: imageSource,
-				location: imageLocation,
-			},
-			chatID: process.env.testGroupID,
-			buttons,
-			sourceURL: feed.link,
-		}
-		return data
-	})
-}
+// 		let data = {
+// 			caption,
+// 			photo: {
+// 				source: imageSource,
+// 				location: imageLocation,
+// 			},
+// 			chatID: process.env.testGroupID,
+// 			buttons,
+// 			sourceURL: feed.link,
+// 		}
+// 		return data
+// 	})
+// }

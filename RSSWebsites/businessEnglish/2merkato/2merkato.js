@@ -188,12 +188,12 @@ exports.fetchAndPost = async function () {
 
 		if (newNEWS.length != 0) {
 			let preparedFeeds = prepareFeeds(newNEWS)
-			siteController.saveFeeds(preparedFeeds)
 			preparedFeeds.forEach((item) => {
 				bot.post(item).catch((err) => {
 					console.log(err)
 				})
 			})
+			siteController.saveFeeds(preparedFeeds)
 		}
 		titles = JSON.parse(fs.readFileSync(latestTitles, "utf-8"))
 		titles[titles.findIndex((el) => el.website == website)].latestTitle = latestTitle

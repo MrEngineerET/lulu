@@ -47,6 +47,7 @@ bot.action("remove", (ctx) => {
 })
 
 let post = async function ({ caption, photo, chatID, buttons, sourceURL }) {
+	setTimeout(() => {}, 5000)
 	caption.sourceURL = sourceURL
 	if (caption.to == "toGroup") {
 		if (photo.source == "local") {
