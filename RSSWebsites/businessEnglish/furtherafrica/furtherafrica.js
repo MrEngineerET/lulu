@@ -143,7 +143,7 @@ let prepareFeeds = function (feeds) {
 
 		let caption = {
 			title: feed.title,
-			description: feed.content.slice(feed.content.indexOf("</p>") + 4).trim(),
+			description: feed.contentSnippet.trim(),
 			// date: feed.date,
 			to: "toGroup",
 			__id: shortid.generate(),
@@ -172,8 +172,8 @@ exports.fetchAndPost = async () => {
 		let newNEWS = []
 
 		let feed = await parser.parseURL(rssURL)
-
 		let items = feed.items.splice(0, 5)
+		fs.writeFileSync("./ressulllt.json", JSON.stringify(items), "utf-8")
 
 		let latest = true
 		for (let i = 0; i < items.length; i++) {
@@ -185,7 +185,6 @@ exports.fetchAndPost = async () => {
 				}
 			} else break
 		}
-
 		if (newNEWS.length != 0) {
 			let preparedFeeds = prepareFeeds(newNEWS)
 			siteController.saveFeeds(preparedFeeds)

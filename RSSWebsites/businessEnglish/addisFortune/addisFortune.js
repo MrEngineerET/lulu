@@ -144,7 +144,7 @@ let prepareFeeds = function (feeds) {
 
 		let caption = {
 			title: feed.title,
-			description: feed.content.slice(feed.content.indexOf("</p>") + 4).trim(),
+			description: feed.contentSnippet.trim(),
 			// date: feed.date,
 			to: "toGroup",
 			__id: shortid.generate(),

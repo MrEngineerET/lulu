@@ -117,9 +117,10 @@ function channelPostController(ctx) {
 	let caption = ctx.update.callback_query.message.caption
 	let id = caption.slice(caption.indexOf("__id") + 5, caption.indexOf("@#$%"))
 	let data = getDataFromSavedFile(id)
+
 	if (data) {
 		let photoURL = data.photo.location
-		if (data.photo.source == "local") {
+		if (data.photo.source == "local" && ctx.update.callback_query.data != "post2EBD") {
 			let imgName = ctx.update.callback_query.data
 			photoURL = path.join(__dirname, "data", "images", `${imgName}.jpg`)
 		}

@@ -28,8 +28,8 @@ let currenciesShortcut = [
 	"GBP",
 	"EUR",
 	"CAD",
-	"CNY",
 	"AUD",
+	"CNY",
 	"SAR",
 	"AED",
 	"JPY",
@@ -58,19 +58,19 @@ let prepareFeeds = function (feeds) {
 	)
 	let imageSource = "local"
 	let description = `
-   Currency             		ETB 🇪🇹
-🇺🇸	USD		---------------	${price[0]} 
-🏴󠁧󠁢󠁥󠁮󠁧	GBG		---------------	${price[1]}                            
-🇪🇺	EUR		---------------	${price[2]}               
-🇨🇦	CAD		---------------	${price[3]}   
-🇨🇳	CNY		---------------	${price[4]}   
-🇦🇺	AUD		---------------	${price[5]}      
-🇸🇦	SAR		---------------	${price[6]}     
-🇦🇪	AED		---------------	${price[7]} 
-🇯🇵	JPY		---------------	${price[8]} 
-🇩🇯	DJF		---------------	${price[9]} 
-🇰🇪	KES		---------------	${price[10]} 
-🇮🇳	INR		---------------	${price[11]} 
+   Currency             		 ETB 🇪🇹
+🇺🇸	USD		---------------   ${price[0]} 
+🏴󠁧󠁢󠁥󠁮󠁧	GBG		---------------   ${price[1]}                            
+🇪🇺	EUR		---------------   ${price[2]}               
+🇨🇦	CAD		---------------   ${price[3]}   
+🇦🇺	AUD		---------------   ${price[4]}      
+🇨🇳	CNY		---------------   ${price[5]}   
+🇸🇦	SAR		 ---------------   ${price[6]}     
+🇦🇪	AED		 ---------------   ${price[7]} 
+🇯🇵	JPY		   ---------------   ${price[8]} 
+🇩🇯	DJF		  ---------------   ${price[9]} 
+🇰🇪	KES		 ---------------   ${price[10]} 
+🇮🇳	INR		 ---------------   ${price[11]} 
 `
 	let caption = {
 		title: `${date} Ethiopian money exchange rate`,
