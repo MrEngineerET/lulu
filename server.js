@@ -1,21 +1,17 @@
-require("dotenv").config({
-	path: "./config.env",
+require('dotenv').config({
+	path: './config.env',
 })
-const { bot } = require("./bot")
+const { bot } = require('./bot')
 
-const netflix = require("./RSSWebsites/netflix/netflix")
-const moneyExchange = require("./RSSWebsites/EthiopianMoneyExchange/ETBExg")
-const thereportermagazines = require("./RSSWebsites/businessEnglish/thereportermagazines/thereportermagazines")
-const addisFortune = require("./RSSWebsites/businessEnglish/addisFortune/addisFortune")
-const newBusinessEthiopia = require("./RSSWebsites/businessEnglish/newBusinessEthiopia/newBusinessEthiopia")
-const furtherafrica = require("./RSSWebsites/businessEnglish/furtherafrica/furtherafrica")
-const ethiopianmonitor = require("./RSSWebsites/businessEnglish/ethiopianmonitor/ethiopianmonitor")
-const merkato2 = require("./RSSWebsites/businessEnglish/2merkato/2merkato")
+const netflix = require('./RSSWebsites/netflix/netflix')
+const thereportermagazines = require('./RSSWebsites/businessEnglish/thereportermagazines/thereportermagazines')
+const addisFortune = require('./RSSWebsites/businessEnglish/addisFortune/addisFortune')
+const newBusinessEthiopia = require('./RSSWebsites/businessEnglish/newBusinessEthiopia/newBusinessEthiopia')
+const furtherafrica = require('./RSSWebsites/businessEnglish/furtherafrica/furtherafrica')
+const ethiopianmonitor = require('./RSSWebsites/businessEnglish/ethiopianmonitor/ethiopianmonitor')
+const merkato2 = require('./RSSWebsites/businessEnglish/2merkato/2merkato')
 
-if (process.env.NODE_ENV == "production") {
-	netflix.fetchAndPost()
-	merkato2.fetchAndPost()
-
+if (process.env.NODE_ENV == 'production') {
 	let fiveMinute = 1000 * 60 * 5
 	let tenMinute = 1000 * 60 * 10
 	let fifteenMinute = 1000 * 60 * 15
@@ -66,30 +62,63 @@ if (process.env.NODE_ENV == "production") {
 	setInterval(TwentyFourHourFunction, twentyFourHour + fifteenMinute)
 }
 
-if (process.env.NODE_ENV === "development") {
-	const oneMinute = 400 * 70 * 1
-	const twoMinute = 400 * 60 * 2
-	const fourMinute = 400 * 50 * 4
+// if (process.env.NODE_ENV === 'development') {
+// 	const oneMinute = 400 * 70 * 1
+// 	const twoMinute = 400 * 60 * 2
+// 	const fourMinute = 400 * 50 * 4
 
-	function oneMinuteFunction() {
-		merkato2.fetchAndPost()
-		furtherafrica.fetchAndPost()
-	}
-	setInterval(oneMinuteFunction, oneMinute)
+// 	function oneMinuteFunction() {
+// 		merkato2.fetchAndPost()
+// 		furtherafrica.fetchAndPost()
+// 	}
+// 	setInterval(oneMinuteFunction, oneMinute)
 
-	function twoMinuteFunction() {
-		addisFortune.fetchAndPost()
-		newBusinessEthiopia.fetchAndPost()
-		moneyExchange.fetchAndPost()
-	}
-	setInterval(twoMinuteFunction, twoMinute)
+// 	function twoMinuteFunction() {
+// 		addisFortune.fetchAndPost()
+// 		newBusinessEthiopia.fetchAndPost()
+// 		// moneyExchange.fetchAndPost()
+// 	}
+// 	setInterval(twoMinuteFunction, twoMinute)
 
-	function fourMinuteFunction() {
+// 	function fourMinuteFunction() {
+// 		netflix.fetchAndPost()
+// 		thereportermagazines.fetchAndPost()
+// 		ethiopianmonitor.fetchAndPost()
+// 	}
+// 	setInterval(fourMinuteFunction, fourMinute)
+// }
+
+if (process.env.NODE_ENV === 'development') {
+	let oneMinute = 60 * 500
+	setTimeout(() => {
 		netflix.fetchAndPost()
-		thereportermagazines.fetchAndPost()
-		ethiopianmonitor.fetchAndPost()
-	}
-	setInterval(fourMinuteFunction, fourMinute)
+		setTimeout(() => {
+			thereportermagazines.fetchAndPost()
+			setTimeout(() => {
+				ethiopianmonitor.fetchAndPost()
+				setTimeout(() => {
+					newBusinessEthiopia.fetchAndPost()
+					setTimeout(() => {
+						addisFortune.fetchAndPost()
+						setTimeout(() => {
+							furtherafrica.fetchAndPost()
+							setTimeout(() => {
+								merkato2.fetchAndPost()
+							}, oneMinute)
+						}, oneMinute)
+					}, oneMinute)
+				}, oneMinute)
+			}, oneMinute)
+		}, oneMinute)
+	}, oneMinute)
+
+	let post = new Promise((resolve, reject) => {
+		setTimeout(() => {
+			netflix.fetchAndPost()
+			resolve()
+		}, oneMinute)
+	})
 }
 
+console.log('servers started ...')
 bot.launch()
