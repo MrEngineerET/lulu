@@ -28,6 +28,7 @@ caption {
     title: String,
     description: String,
     date: String,
+    footer: String,
     to: String // either toGroup or toChannel
     __id: unique id
 }

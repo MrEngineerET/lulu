@@ -1,151 +1,154 @@
-const fs = require("fs")
-const path = require("path")
+const fs = require('fs')
+const path = require('path')
 
-const shortid = require("shortid")
-const Parser = require("rss-parser")
+const shortid = require('shortid')
+const Parser = require('rss-parser')
 
-const bot = require("../../../bot")
-const siteController = require("./../../Controller/sitesController")
+const bot = require('../../../bot')
+const siteController = require('./../../Controller/sitesController')
 
-const rssURL = "https://newbusinessethiopia.com/topics/economy/feed/"
-const latestTitles = path.join(__dirname, "..", "..", "..", "data", "latest.json")
+const rssURL = 'https://newbusinessethiopia.com/topics/economy/feed/'
+const latestTitles = path.join(__dirname, '..', '..', '..', 'data', 'latest.json')
 
 let parser = new Parser()
 
 // button for posts with their own image
 let btn = [
 	[
-		{ text: "#Ethiopian_Business_Daily", callback_data: "post2EBD" },
-		{ text: "remove", callback_data: "remove" },
+		{ text: '#Ethiopian_Business_Daily', callback_data: 'post2EBD' },
+		{ text: 'remove', callback_data: 'remove' },
 	],
 ]
 // button for posts without their own image
 let btn4noImg = [
 	[
 		{
-			text: "#Ethiopian_Business_daily",
-			callback_data: "noResponse",
+			text: '#Ethiopian_Business_daily',
+			callback_data: 'noResponse',
 		},
 		{
-			text: "Remove",
-			callback_data: "remove",
-		},
-	],
-	[
-		{
-			text: "DNEth",
-			callback_data: "DNEth",
-		},
-		{
-			text: "EPEth",
-			callback_data: "EPEth",
-		},
-		{
-			text: "DNInt",
-			callback_data: "DNInt",
-		},
-		{
-			text: "EPInt",
-			callback_data: "EPInt",
+			text: 'Remove',
+			callback_data: 'remove',
 		},
 	],
 	[
 		{
-			text: "NREth",
-			callback_data: "NREth",
+			text: 'DNEth',
+			callback_data: 'DNEth',
 		},
 		{
-			text: "NUEth",
-			callback_data: "NUEth",
+			text: 'EPEth',
+			callback_data: 'EPEth',
 		},
 		{
-			text: "NRInt",
-			callback_data: "NRInt",
+			text: 'DNInt',
+			callback_data: 'DNInt',
 		},
 		{
-			text: "NUInt",
-			callback_data: "NUInt",
-		},
-	],
-	[
-		{
-			text: "BNEth",
-			callback_data: "BNEth",
-		},
-		{
-			text: "BNInt",
-			callback_data: "BNInt",
-		},
-		{
-			text: "Evnt",
-			callback_data: "Evnt",
-		},
-		{
-			text: "Condo",
-			callback_data: "Condo",
+			text: 'EPInt',
+			callback_data: 'EPInt',
 		},
 	],
 	[
 		{
-			text: "Oil",
-			callback_data: "Oil",
+			text: 'NREth',
+			callback_data: 'NREth',
 		},
 		{
-			text: "Tech",
-			callback_data: "Tech",
+			text: 'NUEth',
+			callback_data: 'NUEth',
 		},
 		{
-			text: "Transp",
-			callback_data: "Transp",
+			text: 'NRInt',
+			callback_data: 'NRInt',
 		},
 		{
-			text: "Trsm",
-			callback_data: "Trsm",
+			text: 'NUInt',
+			callback_data: 'NUInt',
 		},
 	],
 	[
 		{
-			text: "Contr",
-			callback_data: "Contr",
+			text: 'BNEth',
+			callback_data: 'BNEth',
 		},
 		{
-			text: "Covid",
-			callback_data: "Covid",
+			text: 'BNInt',
+			callback_data: 'BNInt',
 		},
 		{
-			text: "Fin",
-			callback_data: "Fin",
+			text: 'Evnt',
+			callback_data: 'Evnt',
 		},
 		{
-			text: "Tip",
-			callback_data: "Tip",
+			text: 'Condo',
+			callback_data: 'Condo',
+		},
+	],
+	[
+		{
+			text: 'Oil',
+			callback_data: 'Oil',
+		},
+		{
+			text: 'Tech',
+			callback_data: 'Tech',
+		},
+		{
+			text: 'Transp',
+			callback_data: 'Transp',
+		},
+		{
+			text: 'Trsm',
+			callback_data: 'Trsm',
+		},
+	],
+	[
+		{
+			text: 'Contr',
+			callback_data: 'Contr',
+		},
+		{
+			text: 'Covid',
+			callback_data: 'Covid',
+		},
+		{
+			text: 'Fin',
+			callback_data: 'Fin',
+		},
+		{
+			text: 'Tip',
+			callback_data: 'Tip',
 		},
 	],
 ]
 
 let prepareFeeds = function (feeds) {
-	return feeds.map((feed) => {
-		let imageLocation = ""
-		let imageSource = ""
+	return feeds.map(feed => {
+		let imageLocation = ''
+		let imageSource = ''
 		let start = feed.content.indexOf('src="https:') + 5
-		let end = feed.content.indexOf(".jpg")
+		let end = feed.content.indexOf('.jpg')
 		if (end == -1) {
-			end = feed.content.indexOf(".png")
+			end = feed.content.indexOf('.png')
 		}
 		if (start == -1 || end == -1) {
-			imageLocation = path.join(__dirname, "..", "..", "..", "data", "images", "nopic.jpg")
-			imageSource = "local"
+			imageLocation = path.join(__dirname, '..', '..', '..', 'data', 'images', 'nopic.jpg')
+			imageSource = 'local'
 		} else {
 			end += 4
 			imageLocation = feed.content.slice(start, end)
-			imageSource = "remote"
+			imageSource = 'remote'
 		}
 
 		let caption = {
 			title: feed.title,
 			description: feed.contentSnippet.trim(),
 			// date: feed.date,
-			to: "toGroup",
+			footer: `ስለ ቢዝነስ ብቻ የምንዘግብበትን 
+Special Channel ተቀላቀሉ⬇️
+@Ethiopianbusinessdaily`,
+			to: 'toGroup',
 			__id: shortid.generate(),
 		}
 
@@ -156,7 +159,7 @@ let prepareFeeds = function (feeds) {
 				location: imageLocation,
 			},
 			chatID: process.env.testGroupID,
-			buttons: imageSource == "remote" ? btn : btn4noImg,
+			buttons: imageSource == 'remote' ? btn : btn4noImg,
 			sourceURL: feed.link,
 		}
 		return data
@@ -164,11 +167,11 @@ let prepareFeeds = function (feeds) {
 }
 
 exports.fetchAndPost = async () => {
-	console.log("new Business Ethiopia In")
+	console.log('new Business Ethiopia In')
 	try {
-		let website = "newBusinessEthiopia"
-		let titles = JSON.parse(fs.readFileSync(latestTitles, "utf-8"))
-		let latestTitle = titles.find((el) => el.website == website).latestTitle
+		let website = 'newBusinessEthiopia'
+		let titles = JSON.parse(fs.readFileSync(latestTitles, 'utf-8'))
+		let latestTitle = titles.find(el => el.website == website).latestTitle
 		let newNEWS = []
 
 		let feed = await parser.parseURL(rssURL)
@@ -189,15 +192,25 @@ exports.fetchAndPost = async () => {
 		if (newNEWS.length != 0) {
 			let preparedFeeds = prepareFeeds(newNEWS)
 			siteController.saveFeeds(preparedFeeds)
-			preparedFeeds.forEach((item) => {
-				bot.post(item).catch((err) => {
-					console.log(err)
-				})
+
+			let count = 0
+			preparedFeeds.forEach(item => {
+				bot
+					.post(item)
+					.then(() => {
+						++count
+						console.log(`${count}: new Business ethiopia`)
+						if (count == 5) {
+							titles = JSON.parse(fs.readFileSync(latestTitles, 'utf-8'))
+							titles[titles.findIndex(el => el.website == website)].latestTitle = latestTitle
+							fs.writeFileSync(latestTitles, JSON.stringify(titles), 'utf-8')
+						}
+					})
+					.catch(err => {
+						console.log('eroorrrr')
+					})
 			})
 		}
-		titles = JSON.parse(fs.readFileSync(latestTitles, "utf-8"))
-		titles[titles.findIndex((el) => el.website == website)].latestTitle = latestTitle
-		fs.writeFileSync(latestTitles, JSON.stringify(titles), "utf-8")
 	} catch (err) {
 		console.log(err)
 	}

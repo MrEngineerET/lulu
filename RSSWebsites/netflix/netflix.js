@@ -44,7 +44,7 @@ let prepareFeeds = function (feeds) {
 
 		let caption = {
 			title: feed.title,
-			description: feed.content.slice(feed.content.indexOf('</p>') + 4).trim(),
+			description: feed.contentSnippet.trim(),
 			// date: feed.date,
 			to: 'toGroup',
 			__id: shortid.generate(),
@@ -74,8 +74,7 @@ exports.fetchAndPost = async () => {
 
 		let feed = await parser.parseURL(rssURL)
 
-		let items = feed.items.splice(0, 5)
-
+		let items = feed.items.slice(0, 5)
 		let latest = true
 		for (let i = 0; i < items.length; i++) {
 			if (items[i].title != latestTitle) {
@@ -90,15 +89,46 @@ exports.fetchAndPost = async () => {
 		if (newNEWS.length != 0) {
 			let preparedFeeds = prepareFeeds(newNEWS)
 			siteController.saveFeeds(preparedFeeds)
+			let initialFeed = {
+				caption: {
+					title: '',
+					description: `🍿What is new?🍿
+
+May 28, 2020 on Netflix.
+									
+"Stay Home, Stay Safe"`,
+					footer: `@NetflixAddiss`,
+					to: 'toGroup',
+					id: shortid.generate(),
+				},
+				photo: {
+					source: './../../data/images/netflixAddis.jpg',
+					location: 'local',
+				},
+				chatID: process.env.testGroupID,
+				buttons: btn,
+				// buttons: btn,
+				sourceURL: feed.link,
+			}
+			let count = 0
 			preparedFeeds.forEach(item => {
-				bot.post(item).catch(err => {
-					console.log(err)
-				})
+				bot
+					.post(item)
+					.then(() => {
+						++count
+						console.log(`${count}: netflix`)
+					})
+					.catch(err => {
+						console.log(err)
+					})
 			})
+
+			if (count == 5) {
+				titles = JSON.parse(fs.readFileSync(latestTitles, 'utf-8'))
+				titles[titles.findIndex(el => el.website == website)].latestTitle = latestTitle
+				fs.writeFileSync(latestTitles, JSON.stringify(titles), 'utf-8')
+			}
 		}
-		titles = JSON.parse(fs.readFileSync(latestTitles, 'utf-8'))
-		titles[titles.findIndex(el => el.website == website)].latestTitle = latestTitle
-		fs.writeFileSync(latestTitles, JSON.stringify(titles), 'utf-8')
 	} catch (err) {
 		console.log(err)
 	}
