@@ -45,6 +45,13 @@ let prepareFeeds = function (feeds) {
 		let caption = {
 			title: feed.title,
 			description: feed.contentSnippet.trim(),
+			footer: `<b>"Stay Home, Stay Safe"</b>
+
+Contact - @NetflixAddis_CustomerService
+
+Join, Buy and Watch Netflix
+		  🍿🍿🍿🍿🍿
+		 @NetflixAddiss`,
 			// date: feed.date,
 			to: 'toGroup',
 			__id: shortid.generate(),
