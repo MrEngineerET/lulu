@@ -200,7 +200,7 @@ exports.fetchAndPost = async function () {
 					.then(() => {
 						++count
 						console.log(`${count}: 2merkato`)
-						if (count == 5) {
+						if (count == 1) {
 							titles = JSON.parse(fs.readFileSync(latestTitles, 'utf-8'))
 							titles[titles.findIndex(el => el.website == website)].latestTitle = latestTitle
 							fs.writeFileSync(latestTitles, JSON.stringify(titles), 'utf-8')
