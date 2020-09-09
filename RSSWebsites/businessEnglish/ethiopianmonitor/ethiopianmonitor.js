@@ -190,6 +190,7 @@ exports.fetchAndPost = async () => {
 		}
 
 		if (newNEWS.length != 0) {
+			let totalNewNEWS = newNEWS.length
 			let preparedFeeds = prepareFeeds(newNEWS)
 			siteController.saveFeeds(preparedFeeds)
 
@@ -200,7 +201,7 @@ exports.fetchAndPost = async () => {
 					.then(() => {
 						++count
 						console.log(`${count}: ethiopianmonitor`)
-						if (count == 5) {
+						if (count == totalNewNEWS) {
 							titles = JSON.parse(fs.readFileSync(latestTitles, 'utf-8'))
 							titles[titles.findIndex(el => el.website == website)].latestTitle = latestTitle
 							fs.writeFileSync(latestTitles, JSON.stringify(titles), 'utf-8')

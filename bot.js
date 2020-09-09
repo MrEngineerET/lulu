@@ -129,7 +129,10 @@ function channelPostController(ctx) {
 		data.caption.to = 'toChannel'
 		data.caption.PhotoURL = photoURL
 		data.photo.location = photoURL
-		data.chatID = process.env.testChannelID
+		let netflix = false
+		netflix = data.caption.title.includes('eflix') || data.captiion.description.includes('eflix')
+		if (netflix) data.chatID = process.env.netflixChannelID
+		else data.chatID = process.env.EBDChannelID
 		post(data).catch(err => {
 			console.log(err)
 		})

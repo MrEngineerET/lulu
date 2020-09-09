@@ -94,6 +94,7 @@ exports.fetchAndPost = async () => {
 		}
 
 		if (newNEWS.length != 0) {
+			let totalNewNEWS = newNEWS.length
 			let preparedFeeds = prepareFeeds(newNEWS)
 			siteController.saveFeeds(preparedFeeds)
 			let initialFeed = {
@@ -123,18 +124,17 @@ May 28, 2020 on Netflix.
 					.post(item)
 					.then(() => {
 						++count
+						if (count == totalNewNEWS) {
+							titles = JSON.parse(fs.readFileSync(latestTitles, 'utf-8'))
+							titles[titles.findIndex(el => el.website == website)].latestTitle = latestTitle
+							fs.writeFileSync(latestTitles, JSON.stringify(titles), 'utf-8')
+						}
 						console.log(`${count}: netflix`)
 					})
 					.catch(err => {
 						console.log(err)
 					})
 			})
-
-			if (count == 5) {
-				titles = JSON.parse(fs.readFileSync(latestTitles, 'utf-8'))
-				titles[titles.findIndex(el => el.website == website)].latestTitle = latestTitle
-				fs.writeFileSync(latestTitles, JSON.stringify(titles), 'utf-8')
-			}
 		}
 	} catch (err) {
 		console.log(err)
