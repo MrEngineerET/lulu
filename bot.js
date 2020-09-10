@@ -39,7 +39,7 @@ bot.action('remove', ctx => {
 	let caption = ctx.update.callback_query.message.caption
 	let id = caption.slice(caption.indexOf('__id') + 5, caption.indexOf('@#$%'))
 	let feeds = JSON.parse(fs.readFileSync(dbJSON), 'utf-8')
-	feed = feeds.find(el => el.__id == id)
+	feed = feeds.find(el => el.caption.__id == id)
 	feeds.splice(feeds.indexOf(feed), 1)
 	fs.writeFileSync(dbJSON, JSON.stringify(feeds), 'utf-8', err => {
 		console.log(err)
@@ -118,21 +118,21 @@ function channelPostController(ctx) {
 	let caption = ctx.update.callback_query.message.caption
 	let id = caption.slice(caption.indexOf('__id') + 5, caption.indexOf('@#$%'))
 	let data = getDataFromSavedFile(id)
-
 	if (data) {
 		let photoURL = data.photo.location
 		if (data.photo.source == 'local' && ctx.update.callback_query.data != 'post2EBD') {
 			let imgName = ctx.update.callback_query.data
 			photoURL = path.join(__dirname, 'data', 'images', `${imgName}.jpg`)
 		}
-
+		let netflix = false
+		netflix = data.caption.title.includes('etflix') || data.caption.description.includes('etflix')
+		if (netflix) {
+			data.chatID = process.env.netflixChannelID
+			photoURL = data.photo.location
+		} else data.chatID = process.env.EBDChannelID
 		data.caption.to = 'toChannel'
 		data.caption.PhotoURL = photoURL
 		data.photo.location = photoURL
-		let netflix = false
-		netflix = data.caption.title.includes('eflix') || data.captiion.description.includes('eflix')
-		if (netflix) data.chatID = process.env.netflixChannelID
-		else data.chatID = process.env.EBDChannelID
 		post(data).catch(err => {
 			console.log(err)
 		})

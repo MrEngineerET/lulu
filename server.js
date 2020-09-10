@@ -13,86 +13,83 @@ const merkato2 = require('./RSSWebsites/businessEnglish/2merkato/2merkato')
 const moneyExchange = require('./RSSWebsites/EthiopianMoneyExchange/ETBExg')
 
 require('./restart')()
-if (process.env.NODE_ENV == 'production') {
-	netflix.fetchAndPost()
+
+const oneMinute = 1000 * 60
+setTimeout(() => {
 	merkato2.fetchAndPost()
-
-	let fiveMinute = 1000 * 60 * 5
-	let tenMinute = 1000 * 60 * 10
-	let fifteenMinute = 1000 * 60 * 15
-	let twentyFiveMinute = 1000 * 60 * 25
-
-	let oneHour = 1000 * 60 * 60 * 1
-	let twoHour = oneHour * 2
-	let threeHour = oneHour * 3
-	let fourHour = two * 2
-	let fiveHour = oneHour * 5
-	let sixHour = threeHour * 2
-	let twelveHour = sixHour * 2
-
-	function oneHourFunction() {
+	setTimeout(() => {
 		netflix.fetchAndPost()
-		thereportermagazines.fetchAndPost()
-	}
-	setInterval(oneHourFunction, oneHour + twentyFiveMinute)
+		setTimeout(() => {
+			thereportermagazines.fetchAndPost()
+			setTimeout(() => {
+				newBusinessEthiopia.fetchAndPost()
+				setTimeout(() => {
+					moneyExchange.fetchAndPost()
+					setTimeout(() => {
+						ethiopianmonitor.fetchAndPost()
+						setTimeout(() => {
+							addisFortune.fetchAndPost()
+							setTimeout(() => {
+								furtherafrica.fetchAndPost()
+							}, oneMinute)
+						}, oneMinute)
+					}, oneMinute)
+				}, oneMinute)
+			}, oneMinute)
+		}, oneMinute)
+	}, oneMinute)
+}, oneMinute)
 
-	function twoHourFunction() {
-		addisFortune.fetchAndPost()
-	}
-	setInterval(twoHourFunction, twoHour + tenMinute)
+let fiveMinute = 1000 * 60 * 5
+let tenMinute = 1000 * 60 * 10
+let fifteenMinute = 1000 * 60 * 15
+let twentyFiveMinute = 1000 * 60 * 25
 
-	function threeHourFunction() {
-		ethiopianmonitor.fetchAndPost()
-	}
-	setInterval(threeHourFunction, threeHour + fiveMinute)
+let oneHour = 1000 * 60 * 60 * 1
+let twoHour = oneHour * 2
+let threeHour = oneHour * 3
+let fourHour = twoHour * 2
+let fiveHour = oneHour * 5
+let sixHour = threeHour * 2
+let twelveHour = sixHour * 2
 
-	function fourHourFunction() {
-		furtherafrica.fetchAndPost()
-	}
-	setInterval(fourHourFunction, fourHour + twentyFiveMinute)
-
-	function fiveHourFunction() {
-		newBusinessEthiopia.fetchAndPost()
-	}
-	setInterval(fiveHourFunction, fiveHour + tenMinute)
-
-	function sixHourFunction() {
-		merkato2.fetchAndPost()
-	}
-	setInterval(sixHourFunction, sixHour + fifteenMinute)
-
-	function twelveHourFunction() {
-		moneyExchange.fetchAndPost()
-	}
-	setInterval(sixHourFunction, twelveHour + fifteenMinute)
+function oneHourFunction() {
+	netflix.fetchAndPost()
+	thereportermagazines.fetchAndPost()
 }
+setInterval(oneHourFunction, oneHour + twentyFiveMinute)
 
-// if (process.env.NODE_ENV === "development") {
-// 	console.log("development In")
+function twoHourFunction() {
+	addisFortune.fetchAndPost()
+}
+setInterval(twoHourFunction, twoHour + tenMinute)
 
-// 	const oneMinute = 400 * 70 * 1
-// 	const twoMinute = 400 * 60 * 2
-// 	const fourMinute = 400 * 50 * 4
+function threeHourFunction() {
+	ethiopianmonitor.fetchAndPost()
+}
+setInterval(threeHourFunction, threeHour + fiveMinute)
 
-// 	function oneMinuteFunction() {
-// 		merkato2.fetchAndPost()
-// 	}
-// 	setInterval(oneMinuteFunction, oneMinute)
+function fourHourFunction() {
+	furtherafrica.fetchAndPost()
+}
+setInterval(fourHourFunction, fourHour + twentyFiveMinute)
 
-// 	function twoMinuteFunction() {
-// 		addisFortune.fetchAndPost()
-// 		newBusinessEthiopia.fetchAndPost()
-// 	}
-// 	setInterval(twoMinuteFunction, twoMinute)
+function fiveHourFunction() {
+	newBusinessEthiopia.fetchAndPost()
+}
+setInterval(fiveHourFunction, fiveHour + tenMinute)
 
-// 	function fourMinuteFunction() {
-// 		netflix.fetchAndPost()
-// 		thereportermagazines.fetchAndPost()
-// 	}
-// 	setInterval(fourMinuteFunction, fourMinute)
-// }
+function sixHourFunction() {
+	merkato2.fetchAndPost()
+}
+setInterval(sixHourFunction, sixHour + fifteenMinute)
 
-let tenSec = 10 * 1000
+function twelveHourFunction() {
+	moneyExchange.fetchAndPost()
+}
+setInterval(sixHourFunction, twelveHour + fifteenMinute)
+
+let thirtySec = 30 * 1000
 
 bot.command('part1', ctx => {
 	setTimeout(() => {
@@ -101,9 +98,9 @@ bot.command('part1', ctx => {
 			thereportermagazines.fetchAndPost()
 			setTimeout(() => {
 				newBusinessEthiopia.fetchAndPost()
-			}, tenSec)
-		}, tenSec)
-	}, tenSec)
+			}, thirtySec)
+		}, thirtySec)
+	}, thirtySec)
 })
 bot.command('part2', ctx => {
 	setTimeout(() => {
@@ -111,17 +108,17 @@ bot.command('part2', ctx => {
 		setTimeout(() => {
 			setTimeout(() => {
 				ethiopianmonitor.fetchAndPost()
-			}, tenSec)
-		}, tenSec)
-	}, tenSec)
+			}, thirtySec)
+		}, thirtySec)
+	}, thirtySec)
 })
 bot.command('part3', ctx => {
 	setTimeout(() => {
 		merkato2.fetchAndPost()
 		setTimeout(() => {
 			netflix.fetchAndPost()
-		}, tenSec)
-	}, tenSec)
+		}, thirtySec)
+	}, thirtySec)
 })
 bot.command('money', ctx => {
 	moneyExchange.fetchAndPost()
